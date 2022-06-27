@@ -1,0 +1,9 @@
+﻿@model List<Auth_Lab.Models.DBEntity.AddressBook>
+<h1>登入才能看的首頁</h1>
+
+<ul>
+    @foreach(var person in Model)
+    {
+        <li> @person.Name | @person.Email</li>
+    }
+</ul>

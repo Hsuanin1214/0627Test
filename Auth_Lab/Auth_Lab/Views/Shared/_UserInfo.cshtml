@@ -1,0 +1,27 @@
+﻿@{
+
+    var isLogin = User.Identity.IsAuthenticated;
+
+}
+
+@if (isLogin)
+{
+    <li class="nav-item d-flex align-items-center">
+        <span>@User.Claims.First(x=>x.Type == "UserName").Value, 您好</span>
+        <a class="nav-link text-dark" href="/Account/Logout">登出</a>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" href="/Account/SignUp">註冊</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" href="/Account/Login">登入</a>
+    </li>
+    <li class="nav-item">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+            登入V2
+        </button>
+    </li>
+}

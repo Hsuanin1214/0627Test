@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Auth_Lab</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Auth_Lab</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <div id="user-info" class="d-flex">
+                            @Html.Partial("_UserInfo")
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2022 - Auth_Lab - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    @*Modal*@
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <label>帳號</label>
+                        <input id="login-account" name="Account" type="text" />
+                        <br />
+                        <label>*密碼</label>
+                        <input id="login-pwd" name="Password" type="text" />
+                        <br />
+                        <button id="login-btn" type="submit">登入</button>
+                        <span>***</span>
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        const loginBtn = document.querySelector('#login-btn')
+        const loginAccount = document.querySelector('#login-account')
+        const loginPwd = document.querySelector('#login-pwd')
+        const userInfoArea = document.querySelector('#user-info')
+
+        loginBtn.onclick = function () {
+            console.log('登入')
+
+            
+            let data = {
+                Account:loginAccount.value,
+                Password: loginPwd.value
+            }
+
+            fetch('/Account/FetchLogin', {
+                headers: {
+                    'Accept': 'application/json, text/plain',
+                    'Content-Type': 'application/json;charset=UTF-8'
+                },
+                method: 'POST',
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(jsonData => {
+                    console.log(jsonData)
+                    if (jsonData.isSuccess) {
+                        //登入成功時，Do....
+                        //關閉Modal
+                        $('#exampleModal').modal('hide')
+                        //更新 UserInfo(Partial)
+                        //window.location.reload()//重新整理
+                        fetch('/Account/UserInfo')
+                            .then(response => 
+                                response.text()
+                            )
+                            .then(textData => {
+                                console.log(textData)
+                                userInfoArea.innerHTML=textData
+                            })
+                    } else {
+                        //登入失敗時，Do.....
+                    }
+                })
+        }
+    </script>
+</body>
+</html>
